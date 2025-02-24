@@ -35,19 +35,43 @@ function showToast(message, type = 'success') {
 
 // Phone number formatting
 function formatPhoneNumber(input) {
+    // Remove all non-digit characters
     let number = input.value.replace(/\D/g, '');
+
+    // Limit the number to 11 digits
     if (number.length > 11) {
         number = number.slice(0, 11);
     }
-    
-    if (number.length >= 6) {
-        number = number.slice(0, 3) + '-' + number.slice(3, 6) + '-' + number.slice(6);
-    } else if (number.length >= 3) {
-        number = number.slice(0, 3) + '-' + number.slice(3);
+
+    // If the number is empty, set it to '09'
+    if (number.length === 0) {
+        input.value = '09'; // Set default value to '09' when empty
+        return; // Exit the function early
     }
-    
+
+    // Prevent deletion of "09"
+    if (number.length === 1 && number === '0') {
+        input.value = '09'; // Reset to '09' if the user tries to delete it
+        return; // Exit the function early
+    }
+
+    // Ensure the number starts with '09' if it has less than 2 digits
+    if (number.length < 2) {
+        number = '09' + number;
+    } else if (number.length === 2 && number !== '09') {
+        number = '09' + number.slice(2);
+    }
+
+    // Update the input value with the formatted number
     input.value = number;
 }
+
+// Add event listener to set default value on focus
+document.getElementById('phoneNumber').addEventListener('focus', function() {
+    if (this.value === '') {
+        this.value = '09'; // Set default value to '09' when focused
+    }
+});
 
 // Form validation
 function validateForm(formId) {
